@@ -1,0 +1,84 @@
+.problem-toolbar {
+    background-color: #003847 !important;
+    justify-content: space-between !important;
+    padding-bottom: 10px !important;
+}
+.problem-title {
+    padding: 10px 30px 0 30px;
+    background-color: #003847;
+    margin: 0;
+}
+.problem-button-active {
+    background-color: #90caf9 !important;
+    color: #003847 !important;
+}
+.apply_button {
+    background-color: #90caf9 !important;
+    color: #003847 !important;
+    margin-top: 15px !important; 
+    padding-top: 8px !important;
+}
+
+.problem-container {
+    border: 1px solid;
+    margin-top: 1;
+    min-height: 400; 
+    border-color: #004b5f;
+    padding: 20px;
+}
+.problem-list-item {
+    justify-content: space-between;
+    align-items: center;
+}
+.problem-list {
+    background-color: #417fb3;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+.problem-list-detail {
+    background-color: #417fb3;
+    width: 100%;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+.soap-list {
+    display: flex;
+}
+.soap-input input {
+    background-color: white;
+    color: black;
+}
+.soap-input {
+    width: 100% !important;
+    margin: 5px !important;
+}
+.soap-input > .MuiFormControl-root {
+    width: 100%;
+}
+.soap-text {
+    text-align: center;
+    margin-top: 25px;
+    width: 6%;
+}
+.dad-button {
+    width: 60px;
+    height: 35px;
+    text-align: center;
+    margin-top: 10px;
+    padding-top: 7px;
+    margin-right: 12%;
+    background: white;
+    color: #003847;
+}
+.add-container {
+    display: flex;
+}
+.add-button {
+    background-color: #90caf9 !important;
+    color: #003847 !important;
+    padding-top: 8px !important;
+    height: 35px;
+    margin-top: 12px !important;
+}

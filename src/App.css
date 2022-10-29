@@ -120,3 +120,14 @@ svg {
   border: 1px solid #004b5f;
   color: rgb(130 171 183/1)
 }
+.LeftBar{
+  cursor: 'pointer' !important;
+  height: 50px;
+  text-align: center;
+  padding-top: 10px;
+}
+
+.LeftBar:hover {
+  background-color: #0a252c !important;
+}
+/* style={{display: selectedProblem !== index ? 'none' : ''}} */

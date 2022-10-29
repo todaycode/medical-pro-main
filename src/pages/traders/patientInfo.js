@@ -3,7 +3,6 @@ import VitalsTable from './vitalsTable';
 import TaskList from "./dragdropcomponent";
 import { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
-import UpDragComponent from './DragAndDrop/index';
 
 import {
     Button,
@@ -19,7 +18,7 @@ import {
     Select,
     MenuItem,
     FormControl,
-    Slider
+    Slider,
 } from '@mui/material';
 
 import PinDropIcon from '@mui/icons-material/PinDrop';
@@ -82,39 +81,112 @@ const providerNames = [
     'Care South (hospice)'
 ]
 
-function getStyles(name, personName, theme) {
+const InsMenuItems = [
+    'N/a', 'SP', 'MCR', 'MCD', '3PART', 'MCRADVG'
+];
+
+const LocationItems = [
+    'LOCATION', 'OFFICE', 'PERSONAL', 'CARE HOME', 'HOSPITAL', 'NURSING HOME', 'HOME'
+];
+
+const OldNoteItems = [
+    'OLD NOTE', 'Last 1st note', 'Last 2nd note', 'Last 3rd note'
+];
+
+const NoteTypeItems = [
+    'NOTE TYPE', 'Progress Note', 'History and Physical', 'Consult Note', 'Correspondence', 'Televisit', 'Discharge Summary'
+];
+
+const contactItems = [
+    {type: 'mobile', number: '(285) 592-2235'}, 
+    {type: 'work', number: '(859) 647-2947'},
+    {type: 'home', number: '(292) 880-1817'}
+];
+
+const emergencyItems = [
+    {person: 'Father', number:'(706) 678-2255'}, 
+    {person: 'Monther', number: '(725) 432-5940'}, 
+    {person: 'Brother', number: '(843) 638-7455'}
+]
+
+const historyItems = [
+    {key: 'complaints', value: 'Chief Complaints'},
+    {key: 'illness_history', value: 'History of Present Illness'},
+    {key: 'medical_history', value: 'Past Medical History'},
+    {key: 'surgical_history', value: 'Past Surgical History'},
+    {key: 'medications', value: 'Medications'},
+    {key: 'social_history', value: 'Social History'},
+    {key: 'family_history', value: 'Family History'},
+    {key: 'review', value: 'Review of System'},
+    {key: 'exam', value: 'Physical Exam'}
+]
+
+const questionAnswer = [
+    {
+        'question': 'Chief Complaint',
+        'answer': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum ipsum, dolores dolor sint nam provident autem. Quidem adipisci quasi unde tenetur natus ipsa ullam, eaque veniam eius delectus excepturi perferendis.'
+    },
+    {
+        'question': 'History of Present Illness',
+        'answer': 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores mollitia nemo et nihil ad, molestiae neque quisquam suscipit, repellat saepe odio necessitatibus provident consequatur. Eaque velit ipsam doloremque neque quos.'
+    },
+    {
+        'question': 'Past Medical History',
+        'answer': 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea facere ad et blanditiis mollitia nisi nihil veniam facilis! Mollitia iure officia tempore ratione ad dolorem. Voluptates rem unde incidunt nulla?'
+    },
+    {
+        'question': 'Past Surgical History',
+        'answer': 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellat nesciunt dignissimos recusandae sint minus fugiat maxime rerum in quibusdam voluptas, aliquid, distinctio pariatur. Error illo tempore consequatur voluptate, sapiente autem?'
+    },
+    {
+        'question': 'Medications',
+        'answer': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum tempore cum natus enim eveniet, soluta nesciunt voluptatibus ipsa repudiandae. Necessitatibus architecto sed ut id magnam optio facere velit, eveniet quod.'
+    },
+    {
+        'question': 'Family History',
+        'answer': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum tempore cum natus enim eveniet, soluta nesciunt voluptatibus ipsa repudiandae. Necessitatibus architecto sed ut id magnam optio facere velit, eveniet quod.'
+    },
+    {
+        'question': 'Social History',
+        'answer': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum tempore cum natus enim eveniet, soluta nesciunt voluptatibus ipsa repudiandae. Necessitatibus architecto sed ut id magnam optio facere velit, eveniet quod.'
+    }
+];
+
+function getStyles(name, Allergies, theme) {
     return {
         fontWeight:
-            personName.indexOf(name) === -1
-                ? theme.typography.fontWeightRegular
-                : theme.typography.fontWeightMedium,
+            Allergies.indexOf(name) === -1 ? theme.typography.fontWeightRegular : theme.typography.fontWeightMedium,
     };
 }
-
 
 const Traders = (data) => {
     const patient = data.data;
     const theme = useTheme();
-    const [contactInfo, setContactInfo] = useState(10);
 
+    const [contactInfo, setContactInfo] = useState(0);
     const contactChange = (event) => {
         setContactInfo(event.target.value);
     };
 
-    const [insoneNum, setInsoneNum] = useState(1);
+    const [emergencyInfo, setEmergencyInfo] = useState(0);
+    const emergencyChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setEmergencyInfo(value);
+    };
 
+    const [insoneNum, setInsoneNum] = useState(0);
     const insOne = (event) => {
         setInsoneNum(event.target.value);
     };
 
-    const [instowNum, setInstowNum] = useState(1);
-
+    const [instowNum, setInstowNum] = useState(0);
     const instow = (event) => {
         setInstowNum(event.target.value);
     };
 
-    const [insthreeNum, setInsthreeNum] = useState(1);
-
+    const [insthreeNum, setInsthreeNum] = useState(0);
     const insthree = (event) => {
         setInsthreeNum(event.target.value);
     };
@@ -123,124 +195,68 @@ const Traders = (data) => {
     const [weightBlue, setWeightBlue] = useState(false);
     const [fitValue, setFitValue] = useState(3);
     const [inchValue, setInchValue] = useState(4);
-    const [personName, setPersonName] = useState([]);
 
+    const [Allergies, setAllergies] = useState([]);
     const AllergiesChange = (event) => {
         const {
             target: { value },
         } = event;
-        setPersonName(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
+        setAllergies(value);
     };
 
-    const [phramacieperson, setPhramacieperson] = useState([]);
-
+    const [PhramaciePersons, setPhramaciePersons] = useState([]);
     const PharmacieChange = (event) => {
         const {
             target: { value },
         } = event;
-        setPhramacieperson(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
+        setPhramaciePersons(value);
     };
 
-    const [locationValue, setLocation] = useState([1]);
+    const [providerInfo, setProviderInfo] = useState([]);
+    const providerChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setProviderInfo(value);
+    };
 
+    const [locationValue, setLocation] = useState(0);
     const locationChange = (event) => {
         const {
             target: { value },
         } = event;
-        setLocation(
-            typeof value === 'string' ? value.split(',') : value,
-        );
+        setLocation(value);
     };
 
-    const [oldnoteValue, setOldnote] = useState([1]);
+    const [oldnoteValue, setOldnote] = useState(0);
     const [heightBlue, setHeightBlue] = useState(false);
     const oldnoteChange = (event) => {
         const {
             target: { value },
         } = event;
-        setOldnote(
-            typeof value === 'string' ? value.split(',') : value,
-        );
+        setOldnote(value);
     };
 
-    const [televistInfo, setTelevistInfo] = useState([1]);
+    const [televistInfo, setTelevistInfo] = useState(0);
     const televistChange = (event) => {
         const {
             target: { value },
         } = event;
-        setTelevistInfo(
-            typeof value === 'string' ? value.split(',') : value,
-        );
+        setTelevistInfo(value);
     };
 
-    const [emergencyInfo, setEmergencyInfo] = useState([1]);
-
-    const emergencyChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setEmergencyInfo(
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    };
     const [dateValue, setDateValue] = useState(dayjs(new Date().toLocaleString()));
-
     const dateChange = (newValue) => {
         setDateValue(newValue);
     };
 
-    const [providerInfo, setProviderInfo] = useState([]);
-
-    const providerChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setProviderInfo(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    };
-
     const [modelopen, setModelOpen] = useState(false);
-
     const handleModelOpen = () => setModelOpen(!modelopen);
 
-    const questionAnswer = [
-        {
-            'question': 'Chief Complaint',
-            'answer': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum ipsum, dolores dolor sint nam provident autem. Quidem adipisci quasi unde tenetur natus ipsa ullam, eaque veniam eius delectus excepturi perferendis.'
-        },
-        {
-            'question': 'History of Present Illness',
-            'answer': 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores mollitia nemo et nihil ad, molestiae neque quisquam suscipit, repellat saepe odio necessitatibus provident consequatur. Eaque velit ipsam doloremque neque quos.'
-        },
-        {
-            'question': 'Past Medical History',
-            'answer': 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea facere ad et blanditiis mollitia nisi nihil veniam facilis! Mollitia iure officia tempore ratione ad dolorem. Voluptates rem unde incidunt nulla?'
-        },
-        {
-            'question': 'Past Surgical History',
-            'answer': 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repellat nesciunt dignissimos recusandae sint minus fugiat maxime rerum in quibusdam voluptas, aliquid, distinctio pariatur. Error illo tempore consequatur voluptate, sapiente autem?'
-        },
-        {
-            'question': 'Medications',
-            'answer': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum tempore cum natus enim eveniet, soluta nesciunt voluptatibus ipsa repudiandae. Necessitatibus architecto sed ut id magnam optio facere velit, eveniet quod.'
-        },
-        {
-            'question': 'Family History',
-            'answer': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum tempore cum natus enim eveniet, soluta nesciunt voluptatibus ipsa repudiandae. Necessitatibus architecto sed ut id magnam optio facere velit, eveniet quod.'
-        },
-        {
-            'question': 'Social History',
-            'answer': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum tempore cum natus enim eveniet, soluta nesciunt voluptatibus ipsa repudiandae. Necessitatibus architecto sed ut id magnam optio facere velit, eveniet quod.'
-        }
-    ]
+    const [selectedHisotry, SetSelectedHistory] = useState(0);
+    const handleHistoryClick = (index) => {
+        SetSelectedHistory(index);
+    }
 
     const [bmi, setBmi] = useState();
     const [info, setInfo] = useState();
@@ -290,7 +306,6 @@ const Traders = (data) => {
     }, [weightValue, fitValue, inchValue, SrCr])
 
     const [anchorEl, setAnchorEl] = React.useState(null);
-
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -314,7 +329,6 @@ const Traders = (data) => {
         setBmianchorel(null);
     };
 
-    console.log(dateValue.$d.toLocaleString());
     const bmiopen = Boolean(bmianchorel);
     const BMIid = bmiopen ? 'simple-popover' : undefined;
 
@@ -331,7 +345,6 @@ const Traders = (data) => {
                                         component="img"
                                         src={'images/users/' + patient.avatar}
                                         alt="Live from space album cover"
-                                        // onClick={() => { window.location.href = "" }}
                                     />
                                 </Avatar>
                             }
@@ -340,9 +353,6 @@ const Traders = (data) => {
                                     <Typography gutterBottom sx={{ color: '#24c7f7', fontWeight: 700 }}>
                                          {patient.name} ( {patient.birthday} )
                                     </Typography>
-                                    {/* <Stack direction={'row'}>
-                                        <Typography sx={{ color: '#31b8df' }}>DOB:</Typography><Typography sx={{ color: 'rgb(130 171 183/1)' }}> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;11.24.1950</Typography>
-                                    </Stack> */}
                                     <Stack direction={'row'}>
                                         <Typography sx={{ color: '#31b8df' }}>Contact:</Typography>
                                         &nbsp;&nbsp;&nbsp;
@@ -354,9 +364,11 @@ const Traders = (data) => {
                                             MenuProps={MenuProps}
                                             sx={{ color: 'rgb(130 171 183/1)', border: 'none', height: '24px', p: 0, margin: 0 }}
                                         >
-                                            <MenuItem value={30}>(285) 592-2235 (mobile)</MenuItem>
-                                            <MenuItem value={10}>(859) 647-2947 (home)</MenuItem>
-                                            <MenuItem value={20}>(292) 880-1817 (work)</MenuItem>
+                                            { contactItems.map((ele, key) => {
+                                                return (
+                                                    <MenuItem value={key}>{ele.number} ({ele.type})</MenuItem>
+                                                )
+                                            })}
                                         </Select>
                                     </Stack>
                                     <Stack direction={'row'}>
@@ -372,9 +384,11 @@ const Traders = (data) => {
                                                 label="Select preferred contact"
                                                 sx={{ color: 'rgb(130 171 183/1)', border: 'none', height: '24px', p: 0, margin: 0 }}
                                             >
-                                                <MenuItem value={1}> (706) 678-2255 (father)</MenuItem>
-                                                <MenuItem value={2}> (706) 678-2255 (mother)</MenuItem>
-                                                <MenuItem value={3}> (706) 678-2255 (brother)</MenuItem>
+                                                { emergencyItems.map((ele, key) => {
+                                                    return (
+                                                        <MenuItem value={key}> {ele.number} ({ele.person})</MenuItem>
+                                                    )
+                                                })}
                                             </Select>
                                         </Typography>
                                     </Stack>
@@ -393,13 +407,11 @@ const Traders = (data) => {
                                     onChange={insOne}
                                     sx={{ color: 'rgb(130 171 183/1)', border: 'none', height: '24px', p: 0, margin: 0 }}
                                 >
-                                    <MenuItem value={1}>N/a</MenuItem>
-                                    <MenuItem value={2}>SP</MenuItem>
-                                    <MenuItem value={3}>MCR</MenuItem>
-                                    <MenuItem value={4}>MCD</MenuItem>
-                                    <MenuItem value={5}>3PART</MenuItem>
-                                    <MenuItem value={6}>MCR</MenuItem>
-                                    <MenuItem value={7}>MCRADVG</MenuItem>
+                                { InsMenuItems.map((ele, i) => {
+                                    return (
+                                        <MenuItem value={i}>{ ele }</MenuItem>
+                                    )
+                                })}
                                 </Select>
                             </Typography>
                             <Typography gutterBottom sx={{ color: 'rgb(130 171 183/1)' }}>
@@ -411,13 +423,11 @@ const Traders = (data) => {
                                     onChange={instow}
                                     sx={{ color: 'rgb(130 171 183/1)', border: 'none', height: '24px', p: 0, margin: 0 }}
                                 >
-                                    <MenuItem value={1}>N/a</MenuItem>
-                                    <MenuItem value={2}>SP</MenuItem>
-                                    <MenuItem value={3}>MCR</MenuItem>
-                                    <MenuItem value={4}>MCD</MenuItem>
-                                    <MenuItem value={5}>3PART</MenuItem>
-                                    <MenuItem value={6}>MCR</MenuItem>
-                                    <MenuItem value={7}>MCRADVG</MenuItem>
+                                { InsMenuItems.map((ele, i) => {
+                                    return (
+                                        <MenuItem value={i}>{ ele }</MenuItem>
+                                    )
+                                })}
                                 </Select>
                             </Typography>
                             <Typography gutterBottom sx={{ color: 'rgb(130 171 183/1)' }}>
@@ -429,26 +439,24 @@ const Traders = (data) => {
                                     onChange={insthree}
                                     sx={{ color: 'rgb(130 171 183/1)', border: 'none', height: '24px', p: 0, margin: 0 }}
                                 >
-                                    <MenuItem value={1}>N/a</MenuItem>
-                                    <MenuItem value={2}>SP</MenuItem>
-                                    <MenuItem value={3}>MCR</MenuItem>
-                                    <MenuItem value={4}>MCD</MenuItem>
-                                    <MenuItem value={5}>3PART</MenuItem>
-                                    <MenuItem value={6}>MCR</MenuItem>
-                                    <MenuItem value={7}>MCRADVG</MenuItem>
+                                { InsMenuItems.map((ele, i) => {
+                                    return (
+                                        <MenuItem value={i}>{ ele }</MenuItem>
+                                    )
+                                })}
                                 </Select>
                             </Typography>
                         </Stack>
                     </Grid>
-                    <Grid item lg={3} md={4} xs={12} >
+                    <Grid item lg={4} md={7} xs={12} >
                         <Stack sx={{ paddingTop: 6 }} p={2}>
                             <Typography gutterBottom sx={{ color: 'rgb(130 171 183/1)' }}>
-                                Allergies:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                Allergies:
                                 <FormControl sx={{ m: 0, width: 300 }}>
                                     <Select
                                         multiple
                                         displayEmpty
-                                        value={personName}
+                                        value={Allergies}
                                         onChange={AllergiesChange}
                                         renderValue={(selected) => {
                                             if (selected.length === 0) {
@@ -461,44 +469,37 @@ const Traders = (data) => {
                                         MenuProps={MenuProps}
                                         inputProps={{ 'aria-label': 'Without label' }}
                                     >
-                                        {AllergieNames.map((name) => (
+                                        {AllergieNames.map((ele) => (
                                             <MenuItem
-                                                key={name}
-                                                value={name}
-                                                style={getStyles(name, personName, theme)}
+                                                key={ele}
+                                                value={ele}
+                                                style={getStyles(ele, Allergies, theme)}
                                             >
-                                                {name}
+                                                {ele}
                                             </MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
                             </Typography>
                             <Typography gutterBottom sx={{ color: 'rgb(130 171 183/1)' }}>
-                                Pharmacies:&nbsp;&nbsp;
+                                Pharmacies:
                                 <FormControl sx={{ m: 0, width: 300 }}>
                                     <Select
                                         multiple
                                         displayEmpty
-                                        value={phramacieperson}
+                                        value={PhramaciePersons}
                                         onChange={PharmacieChange}
                                         renderValue={(selected) => {
-                                            if (selected.length === 0) {
-                                                return <em>Select Pharmacies</em>;
-                                            }
-
+                                            if (selected.length === 0) return <em>Select Pharmacies</em>;
                                             return selected.join(', ');
                                         }}
                                         input={<OutlinedInput sx={{ color: 'rgb(130 171 183/1)' }} />}
                                         MenuProps={MenuProps}
                                         inputProps={{ 'aria-label': 'Without label' }}
                                     >
-                                        {phramacieNames.map((name) => (
-                                            <MenuItem
-                                                key={name}
-                                                value={name}
-                                                style={getStyles(name, personName, theme)}
-                                            >
-                                                {name}
+                                        {phramacieNames.map((ele) => (
+                                            <MenuItem key={ele} value={ele} style={getStyles(ele, PhramaciePersons, theme)} >
+                                                {ele}
                                             </MenuItem>
                                         ))}
                                     </Select>
@@ -515,22 +516,21 @@ const Traders = (data) => {
                                         onChange={providerChange}
                                         renderValue={(selected) => {
                                             if (selected.length === 0) {
-                                                return <em>John Smith, M.D. (Internal Medicine)</em>;
+                                                return <em>Select Providers</em>;
                                             }
-
                                             return selected.join(', ');
                                         }}
                                         input={<OutlinedInput sx={{ color: 'rgb(130 171 183/1)' }} />}
                                         MenuProps={MenuProps}
                                         inputProps={{ 'aria-label': 'Without label' }}
                                     >
-                                        {providerNames.map((name) => (
+                                        {providerNames.map((ele) => (
                                             <MenuItem
-                                                key={name}
-                                                value={name}
-                                                style={getStyles(name, personName, theme)}
+                                                key={ele}
+                                                value={ele}
+                                                style={getStyles(ele, providerInfo, theme)}
                                             >
-                                                {name}
+                                                {ele}
                                             </MenuItem>
                                         ))}
                                     </Select>
@@ -538,7 +538,7 @@ const Traders = (data) => {
                             </Typography>
                         </Stack>
                     </Grid>
-                    <Grid item lg={3} md={6} xs={12} >
+                    <Grid item lg={3} md={3} xs={12} >
                         <Stack sx={{ paddingTop: 6 }} p={2}>
                             <Typography gutterBottom sx={{ color: 'rgb(130 171 183/1)', display: 'flex', flexDirection: 'row' }}>
                                 Weight:&nbsp;&nbsp;
@@ -608,8 +608,7 @@ const Traders = (data) => {
                             </Typography>
 
                             <Typography aria-describedby={id} gutterBottom onClick={handleClick} sx={{ color: 'rgb(130 171 183/1)', display: 'flex' }}>
-                                CrCl:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{Number(CrCl).toFixed(1)} - {crclInfo}
-                                &nbsp;&nbsp;&nbsp;
+                                CrCl:&nbsp;{Number(CrCl).toFixed(1)} - {crclInfo} &nbsp;
                                 <AddToPhotosIcon sx={{ color: 'rgb(130 171 183/1)', cursor: 'pointer' }} />
                             </Typography>
                             <Popover
@@ -656,8 +655,7 @@ const Traders = (data) => {
                                 </Typography>
                             </Popover>
                             <Typography aria-describedby={BMIid} onClick={bmihandleClick} gutterBottom sx={{ color: 'rgb(130 171 183/1)', display: 'flex' }}>
-                                BMI:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{bmi}&nbsp;&nbsp;{info}
-                                &nbsp;&nbsp;&nbsp;
+                                BMI: {bmi}&nbsp;{info} &nbsp;
                                 <AddToPhotosIcon sx={{ color: 'rgb(130 171 183/1)', cursor: 'pointer' }} />
                             </Typography>
                             <Popover
@@ -711,10 +709,10 @@ const Traders = (data) => {
                     </Grid>
                 </Grid>
                 <Grid container spacing={1} paddingRight={2} paddingLeft={2} >
-                    <Grid item lg={9} md={8} xs={12} >
+                    <Grid item lg={12} md={12} xs={12} >
                         <Box sx={{ border: '1px solid rgb(0 75 95/1)', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }} p={2}>
-                            <Stack direction={'row'} spacing={1} justifyContent={{ xs: 'space-between' }} flexWrap={{ xs: 'wrap' }} sx={{ width: '100%' }}>
-                                <Button variant="outlined" startIcon={<PinDropIcon />}>
+                            <Stack direction={'row'} spacing={1} sx={{ width: '100%', justifyContent: 'space-around', flexWrap: 'wrap' }}>
+                                <Button variant="outlined" sx={{p:1}} startIcon={<PinDropIcon />}>
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
@@ -723,18 +721,15 @@ const Traders = (data) => {
                                         MenuProps={LocationTool}
                                         sx={{ color: 'rgb(130 171 183/1)', border: 'none', height: '24px', width: 130, p: 0, margin: 0 }}
                                     >
-                                        <MenuItem value={1}>LOCATION </MenuItem>
-                                        <MenuItem value={2}>OFFICE</MenuItem>
-                                        <MenuItem value={3}> PERSONAL</MenuItem>
-                                        <MenuItem value={4}>CARE HOME</MenuItem>
-                                        <MenuItem value={5}>HOSPITAL</MenuItem>
-                                        <MenuItem value={6}>NURSING HOME </MenuItem>
-                                        <MenuItem value={7}>HOME</MenuItem>
-
+                                        { LocationItems.map((ele, key) => {
+                                            return (
+                                                <MenuItem value={key}>{ele}</MenuItem>
+                                            )
+                                        })}
                                     </Select>
                                 </Button>
-                                <Button variant="outlined" startIcon={<NoteAddIcon />} >ADD NOTE</Button>
-                                <Button variant="outlined" startIcon={<SubjectIcon />} >
+                                <Button variant="outlined" sx={{p:1}} startIcon={<NoteAddIcon />} >ADD NOTE</Button>
+                                <Button variant="outlined" sx={{p:1}} startIcon={<SubjectIcon />} >
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
@@ -743,14 +738,14 @@ const Traders = (data) => {
                                         MenuProps={LocationTool}
                                         sx={{ color: 'rgb(130 171 183/1)', border: 'none', height: '24px', width: 130, p: 0, margin: 0 }}
                                     >
-                                        <MenuItem value={1}>OLD NOTES </MenuItem>
-                                        <MenuItem value={2}>Last 1st note</MenuItem>
-                                        <MenuItem value={3}> Last 2st note</MenuItem>
-                                        <MenuItem value={4}>Last 3st note</MenuItem>
-
+                                        { OldNoteItems.map((ele, key)=>{
+                                            return(
+                                                <MenuItem value={key}> { ele } </MenuItem>
+                                            )
+                                        })}
                                     </Select>
                                 </Button>
-                                <Button variant="outlined" startIcon={<NoteIcon />}  >
+                                <Button variant="outlined" sx={{p:1}} startIcon={<NoteIcon />}  >
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
@@ -759,18 +754,15 @@ const Traders = (data) => {
                                         MenuProps={LocationTool}
                                         sx={{ color: 'rgb(130 171 183/1)', border: 'none', height: '24px', width: 130, p: 0, margin: 0 }}
                                     >
-                                        <MenuItem value={0}>Note Type</MenuItem>
-                                        <MenuItem value={1}>Progress Note </MenuItem>
-                                        <MenuItem value={2}>History and Physical</MenuItem>
-                                        <MenuItem value={3}> Consult Note</MenuItem>
-                                        <MenuItem value={4}>Correspondence</MenuItem>
-                                        <MenuItem value={5}>Televisit</MenuItem>
-                                        <MenuItem value={6}>Discharge Summary</MenuItem>
-
+                                        { NoteTypeItems.map((ele, key) => {
+                                            return(
+                                                <MenuItem value={key}>{ele}</MenuItem>
+                                            )
+                                        })}
                                     </Select>
                                 </Button>
-                                <Button variant="outlined" startIcon={<PreviewIcon />} onClick={handleModelOpen} >PREVIEW</Button>
-                                <Button variant="outlined" startIcon={<SendIcon />} >SEND</Button>
+                                <Button variant="outlined" sx={{p:1}} startIcon={<PreviewIcon />} onClick={handleModelOpen} >PREVIEW</Button>
+                                <Button variant="outlined" sx={{p:1}} startIcon={<SendIcon />} >SEND</Button>
                                 <Button variant="outlined" sx={{ height: '40px' }}>
                                     <LocalizationProvider dateAdapter={AdapterDayjs} >
                                         <DateTimePicker
@@ -791,44 +783,18 @@ const Traders = (data) => {
                         </Box>
                         <Box sx={{ marginTop: 4 }} >
                             <Stack>
-                                <Grid container spacing={1}>
-                                    <Grid item lg={3} md={4} xs={12} >
-                                        <Box sx={{ border: '1px solid rgb(0 75 95/1)' }} p={2} >
-                                            <Typography variant='h6' mb={2} sx={{ cursor: 'pointer' }}>Chief Complaints</Typography>
-                                            <Typography variant='h6' mb={2} sx={{ cursor: 'pointer' }}>History of Present Illness</Typography>
-                                            <Typography variant='h6' mb={2} sx={{ cursor: 'pointer' }}>Past Medical History</Typography>
-                                            <Typography variant='h6' mb={2} sx={{ cursor: 'pointer' }}>Past Surgical History</Typography>
-                                            <Typography variant='h6' mb={2} sx={{ cursor: 'pointer' }}>Medications</Typography>
-                                            <Typography variant='h6' mb={2} sx={{ cursor: 'pointer' }}>Social History</Typography>
-                                            <Typography variant='h6' mb={2} sx={{ cursor: 'pointer' }}>Family History</Typography>
-                                            <Typography variant='h6' mb={2} sx={{ cursor: 'pointer' }}>Review of System</Typography>
-                                            <Typography variant='h6' mb={2} sx={{ cursor: 'pointer' }}>Physical Exam</Typography>
-                                        </Box>
-                                    </Grid>
-                                    <Grid item lg={9} md={8} xs={12} >
-                                        <Box sx={{ border: '1px solid rgb(0 75 95/1)', height: '100%' }} p={2} >
-                                            <TaskList />
-
-                                            <UpDragComponent />
-                                        </Box>
-                                    </Grid>
+                                <Grid>
+                                    <Box sx={{ border: '1px solid rgb(0 75 95/1)', height: '100%' }} p={2} >
+                                        <TaskList />
+                                    </Box>
                                 </Grid>
                             </Stack>
-                        </Box>
-                    </Grid>
-                    <Grid item lg={3} md={4} xs={12}>
-                        <Box sx={{ border: '1px solid rgb(0 75 95/1)', height: '100%', width: '100%' }} p={2}>
-                            <Typography>New Orders</Typography>
-                            <Typography>   Current Orders</Typography>
                         </Box>
                     </Grid>
                 </Grid>
             </Box>
 
-            <Dialog
-                open={modelopen}
-                onClose={handleModelOpen}
-            >
+            <Dialog open={modelopen} onClose={handleModelOpen} >
                 <Card sx={{ bgcolor: '#013644', border: 'none', overflow: 'auto' }}>
                     <Stack direction={"row"} justifyContent={'center'} sx={{ paddingTop: 5 }}>
                         <Typography gutterBottom component="div" variant='h6' sx={{ lineHeight: '1.75rem' }}>
@@ -838,16 +804,15 @@ const Traders = (data) => {
                     <Stack direction={"column"} p={5}>
                         <Typography gutterBottom component="div" sx={{ color: 'rgb(130 171 183/1)', fontSize: '.8rem', paddingLeft: 3, paddingTop: 5 }}>
                             name: {patient.name}
-
                         </Typography>
                         <Typography gutterBottom component="div" sx={{ color: 'rgb(130 171 183/1)', fontSize: '.8rem', paddingLeft: 3, paddingTop: 2 }}>
-                            location: Heritage Health Care
+                            location: {locationValue === 'LOCATION' ? '' : locationValue}
                         </Typography>
                         <Typography gutterBottom component="div" sx={{ color: 'rgb(130 171 183/1)', fontSize: '.8rem', paddingLeft: 3, paddingTop: 2 }}>
-                            date: 
+                            date: {new Date(dateValue.$d).getFullYear() + "-" + (new Date(dateValue.$d).getMonth()+1) + "-" + new Date(dateValue.$d).getDate()}
                         </Typography>
                         <Typography gutterBottom component="div" sx={{ color: 'rgb(130 171 183/1)', fontSize: '.8rem', paddingLeft: 3, paddingTop: 2 }}>
-                            provider:
+                            providers: {providerInfo.map((ele, key) => {return ele + ', '})}
                         </Typography>
                         {questionAnswer.map((index, i) => {
                             return (

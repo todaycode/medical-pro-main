@@ -117,14 +117,11 @@ export default function MiniDrawer() {
                         {!sideOpen ? <MenuIcon /> : <CloseIcon />}
 
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div" sx={{ display: { lg: 'block', md: 'block', xs: 'none' } }} >
-                        {/* <CardMedia
-                            sx={{ height: 30, width: 30 }}
-                            component="img"
-                            image={CardImg}
-                            alt="Live from space album cover"
-                            onClick={() => { window.location.href = "" }}
-                        /> */}
+                    <Typography 
+                        variant="h6" noWrap component="div" 
+                        sx={{ display: { lg: 'block', md: 'block', xs: 'none', cursor: 'pointer' } }} 
+                        onClick={() => { window.location.href = "/" }}
+                    >
                         Medical Pro
                     </Typography>
                     <Stack spacing={2} direction="row">
